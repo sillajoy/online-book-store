@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <title>Bookify</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .product {
+      display: flex;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      align-items: center;
+    }
+    .product img {
+      max-width: 100px;
+      margin-right: 20px;
+      border-radius: 8px;
+    }
+    .product-info {
+      flex: 1;
+    }
+    .product-info h2 {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.2em;
+    }
+    .button-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .update-button, .remove-button {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .update-button {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .remove-button {
+      background-color: #f44336;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .remove-button i {
+      margin-right: 5px;
+    }
+    .total-amount-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-top: 2px solid #ccc;
+      margin-top: 20px;
+    }
+    .total-amount {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.5em;
+    }
+    .place-order-button {
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .empty-cart {
+      text-align: center;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.2em;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Nav -->
+  <header>
+    <div class="container">
+      <div class="logo">
+        <h2><a href="{% url 'home_page' %}">Bookify</a></h2>
+        <p>Your one stop book shop</p>
+      </div>
+      <div class="navigation" style="display: flex; justify-content: space-between; align-items: center;">
+      </div>
+      <div class="user-actions" style="display: flex; align-items: center;">
+        {% if 'user_id' in request.session %}
+        <form method="POST" action="{% url 'logout' %}" style="margin-right: 10px;">
+          {% csrf_token %}
+          <button type="submit" class="styled-button">Logout</button>
+        </form>
+        {% else %}
+        <form method="GET" action="{% url 'login' %}" style="margin-right: 10px;">
+          <button type="submit" class="styled-button">Login</button>
+        </form>
+        {% endif %}
+        <a href="{% url 'show_cart' %}" style="margin-right: 10px;">
+          <i class="fa fa-fw fa-shopping-cart fa-2x" style="color: #fff;"></i>
+        </a>
+        <a href="{% url 'user_profile' %}">
+          <i class="fa fa-fw fa-user fa-2x" style="color: #fff;"></i>
+        </a>
+      </div>      
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <div class="container">
+    <h1>Shopping Cart</h1>
+    {% if cart_items %}
+      {% for x in cart_items %}
+        <div class="product">
+          <img src="{{ x.book.book_image.url }}" alt="Product Image">
+          <div class="product-info">
+            <h2>{{ x.book.book_name }}</h2>
+            <div class="button-container">
+              <form action="{% url 'update_cart' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="cart_item_id" value="{{ x.pk }}">
+                <input type="number" name="quantity" value="{{ x.quantity }}" min="1">
+                <button type="submit" class="update-button">Update</button>
+              </form>
+              <form action="{% url 'remove_from_cart' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="cart_item_id" value="{{ x.pk }}">
+                <button type="submit" class="remove-button">
+                  <i class="fa-solid fa-trash-can" style="color: #ffffff;"></i> Remove
+                </button>
+              </form>
+            </div>
+            <p>Price per item: ₹ {{ x.book.book_price }}</p>
+            <p>Total Price: ₹ {{ x.total_price }}</p>
+          </div>
+        </div>
+      {% endfor %}
+      <div class="total-amount-container">
+        <div class="total-amount">Total Amount: ₹ {{ total_amount }}</div>
+        <form action="{% url 'delivery' %}" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="total_amount" value="{{ total_amount }}">
+          <!-- Pass cart details as hidden fields -->
+          {% for x in cart_items %}
+            <input type="hidden" name="cart_items" value="{{ x.book.book_name }}:{{ x.quantity }}:{{ x.total_price }}">
+          {% endfor %}
+          <button type="submit" class="place-order-button">Place Order</button>
+        </form>
+        
+      </div>
+    {% else %}
+      <p class="empty-cart">Your cart is empty.</p>
+    {% endif %}
+  </div>
+
+  
+</body>
+</html>

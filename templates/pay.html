@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <style>
+        body {
+            background-size: cover;
+            background-repeat: no-repeat;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); 
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); 
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        
+        form {
+            margin-top: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+        
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50; /* Green background color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        input[type="submit"]:hover {
+            background-color: #45a049; /* Darker green color on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Payment</h1>
+        <form method="POST" >
+            {% csrf_token %}
+            <label>Name:</label>
+            <input type="text" name="Name" placeholder="{{ user.user_name }}" required>
+            
+            <input type="hidden" name="book_id" value="{{ book.book_id }}">
+            <label>Book:</label>
+            <input type="text" name="book_name" placeholder="{{ book.book_name }}" required>
+    
+            <label>Quantity:</label>
+            <input type="text" name="quantity" placeholder="{{ quantity }}" required>
+            
+            <label>Total Amount:</label>
+            <input type="text" name="amount" placeholder="{{ total_amount }}" required>
+            
+            <input type="submit" value="Submit">
+        </form>
+    </div>    
+</body>
+</html>

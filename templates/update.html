@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Book Data</title>
+    <style>
+        body {
+            background-size: cover;
+            background-repeat: no-repeat;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); 
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); 
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        
+        form {
+            margin-top: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+        
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #ff2e51;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        input[type="submit"]:hover {
+            background-color: #ff0932;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Update Book</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% for x in book %}
+            <label for="book_name">Book Name:</label>
+            <input type="text" name="new_book_name" value="{{ x.book_name }}">
+            
+            {% if x.book_image %}
+            <img src="{{ x.book_image.url }}" style="max-width: 200px; max-height: 200px;">
+            {% endif %}
+            
+            <input type="file" name="new_book_image" accept="image/">
+            
+            <label for="book_price">Book Price:</label>
+            <input type="number" name="new_book_price" value="{{ x.book_price }}">
+            
+            <label for="book_description">Book Description:</label>
+            <textarea name="new_book_description" rows="4" cols="50">{{ x.book_description }}</textarea>
+            
+            <label for="book_category">Book Category:</label>
+            <select name="new_book_category">
+                <option value="">Select Category</option>
+                {% for cat in category %}
+                <option value="{{ cat.category_id }}" {% if x.book_category.category_id == cat.category_id %}selected{% endif %}>{{ cat.category_name }}</option>
+                {% endfor %}
+            </select>            
+            {% endfor %}
+            
+            <input type="submit" value="Submit Edit">
+        </form>
+    </div>
+</body>
+</html>

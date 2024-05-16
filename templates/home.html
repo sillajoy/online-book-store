@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <title>Bookify</title>
+  <!-- css -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+</head>
+
+<body>
+  <!-- Top Nav -->
+  <header>
+    <div class="container">
+      <div class="logo">
+        <h2><a href="{% url 'home_page' %}">Bookify</a></h2>
+        <p>Your one stop book shop</p>
+      </div>
+  
+      <div class="navigation" style="display: flex; justify-content: space-between; align-items: center;">
+        <form id="filter-form" method="POST" style="display: flex; align-items: center;">
+          {% csrf_token %}
+  
+          <div class="search-box" style="margin-right: 10px;">
+            <input type="search" placeholder="Search Books" name="search" value="{{searched}}"/>
+            <i class="fas fa-search"></i>
+          </div>
+
+          <select name="category-filter" class="select-style" onchange="this.form.submit()" style="margin-right: 10px;">
+            <option value="">Category</option>
+            {% for x in categorys %}
+            <option value="{{x.category_id}}">{{x.category_name}}</option>
+            {% endfor %}
+          </select>
+  
+          <select name="price-filter" class="select-style" onchange="this.form.submit()" style="margin-right: 10px;">
+            <option value="">Price</option>
+            <option value="lowest">Lowest First</option>
+            <option value="highest">Highest First</option>
+          </select>
+        </form>
+      </div>
+  
+      <div class="user-actions" style="display: flex; align-items: center;">
+        {% if 'user_id' in request.session %}
+        <form method="POST" action="{% url 'logout' %}" style="margin-right: 10px;">
+            {% csrf_token %}
+            <button type="submit" class="styled-button">Logout</button>
+        </form>
+        {% else %}
+        <form method="GET" action="{% url 'login' %}" style="margin-right: 10px;">
+            <button type="submit" class="styled-button">Login</button>
+        </form>
+        {% endif %}
+        <a href="{% url 'show_cart' %}" style="margin-right: 10px;"><i class="fa fa-fw fa-shopping-cart fa-2x" style="color: #fff;"></i></a>
+        <a href="{% url 'user_profile' %}"><i class="fa fa-fw fa-user fa-2x" style="color: #fff;"></i></a>
+      </div>      
+    
+    </div>
+  </header>  
+
+
+  
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="overlay">
+      <div class="container">
+        <div class="content">
+          <h1>Contribute Your Book</h1>
+          <a href="{% url 'book_add' %}" class="btn btn-hero">
+              Add Books
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="book-section-container">
+        <div class="book-section section-a">
+            <div class="row">
+                <div class="filter-container" style="display: flex;">
+                </div>
+            </div>
+
+            <div class="card-wraper">
+                {% for book in books %}
+                <div class="card">
+                  {% if book.book_image %}
+                  <img src="{{ book.book_image.url }}" alt="{{ book.book_name }}">
+                  {% else %}
+                  <div class="placeholder-image">No Image Available</div>
+                  {% endif %}
+                    <div class="book-details">
+                        <h3>{{ book.book_name }}</h3>
+                        <p>by {{ book.book_user.user_name }}</p>
+                        <a class="btn btn-primary" style="display: inline;" href="details/{{ book.book_id }}">Read More</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="copyright">
+        Copyright 2024 Bookify
+      </div>
+      <div class="acknowledgement">
+        API Provided by
+        <a target="_blank" href="https://www.goodreads.com/">Goodreads</a>
+      </div>
+    </div>
+  </footer>
+
+
+</body>
+</html>

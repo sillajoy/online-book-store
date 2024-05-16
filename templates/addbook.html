@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Book</title>
+    <style>
+        body {
+            background-size: cover;
+            background-repeat: no-repeat;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); 
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); 
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        
+        form {
+            margin-top: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+        
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50; /* Green background color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        input[type="submit"]:hover {
+            background-color: #45a049; /* Darker green color on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add New Book</h1>
+        <form action="{% url 'book_add' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="book_name">Book Name:</label>
+            <input type="text" name="book_name" required>
+            
+            <label for="book_image">Book Image:</label>
+            <input type="file" name="book_image" accept="image/*">
+            
+            <label for="book_price">Book Price:</label>
+            <input type="number" name="book_price" step="0.01" min="0" required>
+            
+            <label for="book_description">Book Description:</label>
+            <textarea name="book_description" rows="4" cols="50" required></textarea>
+            
+            <label for="book_category">Book Category:</label>
+            <select name="book_category" required>
+                <option value="">Select Category</option>
+                {% for x in categories %}
+                <option value="{{ x.category_id }}">{{ x.category_name }}</option>
+                {% endfor %}
+            </select>
+            
+            <input type="submit" value="Add Book">
+        </form>
+    </div>
+</body>
+</html>
